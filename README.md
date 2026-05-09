@@ -1,12 +1,10 @@
 # giteki
 
-`giteki` is a Rust CLI that queries Japan's Ministry of Internal Affairs and Communications [public Web API](https://www.tele.soumu.go.jp/j/sys/equ/tech/webapi/) for certified radio equipment and prints Giteki certification details in the terminal.
+A Rust CLI that queries Japan's Ministry of Internal Affairs and Communications [public Web API](https://www.tele.soumu.go.jp/j/sys/equ/tech/webapi/) for certified radio equipment and prints Giteki certification details in the terminal.
 
 [![](https://github.com/mi2428/giteki/blob/main/screenshot.png?raw=true)](https://github.com/mi2428/giteki/blob/main/screenshot.png)
 
 ## Installation
-
-### Build from Source
 
 Install Rust and Cargo first, then build and install the binary with `make install`.
 By default, the binary is installed to `~/.local/bin/giteki`.
@@ -22,7 +20,8 @@ $ make -C giteki install
 > Pick the asset that matches your machine, make it executable, and place it on your `PATH`.
 > 
 > ```console
-> $ curl -L -o giteki https://github.com/mi2428/giteki/releases/download/vX.Y.Z/giteki-darwin-arm64
+> $ curl -L -o giteki https://github.com/mi2428/giteki/releases/download/v0.9.0/giteki-v0.9.0-darwin-arm64
+> $ chmod +x ./giteki
 > ```
 
 ## Usage
