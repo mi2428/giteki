@@ -18,6 +18,9 @@ GIT_REMOTE ?= origin
 APP     := giteki
 BINDIR  := bin
 DISTDIR := dist
+PACKAGE_VERSION := $(shell sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n 1)
+DIST_TAG        ?= $(if $(TAG),$(TAG),v$(PACKAGE_VERSION))
+DIST_APP        := $(APP)-$(DIST_TAG)
 
 INSTALL_PREFIX ?= $(HOME)/.local
 INSTALL_BINDIR ?= $(INSTALL_PREFIX)/bin
@@ -209,7 +212,7 @@ release: ## Build 4 local dist binaries, push the tag, and publish a GitHub rele
 	package_version="$$(manifest_value_at_ref "$$release_ref" version)"; \
 	[[ "$$package_name" == "$$APP" ]] || fail "Cargo.toml package name is $$package_name, expected $$APP"; \
 	[[ "$$package_version" == "$$tag_version" ]] || fail "Cargo.toml version $$package_version does not match $$tag"; \
-	run "$(RELEASE_MAKE)" dist OS="$$release_os" ARCH="$$release_arch"; \
+	run "$(RELEASE_MAKE)" dist TAG="$$tag" OS="$$release_os" ARCH="$$release_arch"; \
 	run git push "$$remote" "refs/tags/$$tag"; \
 	pushed_created_tag=1; \
 	publish_github_release "$$tag" "$$release_commit" "$$repository"; \
@@ -251,15 +254,15 @@ dist: ## Build release binaries into dist/. Use OS=darwin,linux and ARCH=amd64,a
 
 .PHONY: dist-smoke
 dist-smoke: ## Smoke-test Linux dist binaries in a Debian container
-	@if ! ls "$(DISTDIR)"/$(APP)-linux-* >/dev/null 2>&1; then \
+	@if ! ls "$(DISTDIR)"/$(DIST_APP)-linux-* >/dev/null 2>&1; then \
 		printf 'Skipping Linux dist smoke test; no Linux artifacts found\n'; \
 		exit 0; \
 	fi
 	@$(MAKE) --no-print-directory _docker-check
 	@for arch in $(LINUX_ARCHS); do \
 		case "$$arch" in \
-			amd64) binary="$(DISTDIR)/$(APP)-$(LINUX_amd64_SUFFIX)"; platform="$(LINUX_amd64_PLATFORM)" ;; \
-			arm64) binary="$(DISTDIR)/$(APP)-$(LINUX_arm64_SUFFIX)"; platform="$(LINUX_arm64_PLATFORM)" ;; \
+			amd64) binary="$(DISTDIR)/$(DIST_APP)-$(LINUX_amd64_SUFFIX)"; platform="$(LINUX_amd64_PLATFORM)" ;; \
+			arm64) binary="$(DISTDIR)/$(DIST_APP)-$(LINUX_arm64_SUFFIX)"; platform="$(LINUX_arm64_PLATFORM)" ;; \
 			*) echo "Unsupported Linux ARCH '$$arch'" >&2; exit 1 ;; \
 		esac; \
 		if [ ! -f "$$binary" ]; then \
@@ -282,11 +285,11 @@ dist-smoke: ## Smoke-test Linux dist binaries in a Debian container
 
 .PHONY: checksums
 checksums: ## Write SHA-256 checksums for dist artifacts
-	@if [ ! -d "$(DISTDIR)" ] || ! ls "$(DISTDIR)"/$(APP)-* >/dev/null 2>&1; then \
+	@if [ ! -d "$(DISTDIR)" ] || ! ls "$(DISTDIR)"/$(DIST_APP)-* >/dev/null 2>&1; then \
 		echo "No dist artifacts found" >&2; \
 		exit 1; \
 	fi
-	@cd "$(DISTDIR)" && shasum -a 256 $(APP)-* > checksums.txt
+	@cd "$(DISTDIR)" && shasum -a 256 $(DIST_APP)-* > checksums.txt
 	@printf 'Wrote %s/checksums.txt\n' "$(DISTDIR)"
 
 .PHONY: _docker-check
@@ -321,9 +324,9 @@ _dist.darwin.$(1): _target.$$(DARWIN_$(1)_TARGET)
 	@printf 'Building %s for %s\n' "$(APP)" "$$(DARWIN_$(1)_TARGET)"
 	@mkdir -p $(DISTDIR)
 	@$(CARGO_ENV) $(CARGO) build --locked --release --target $$(DARWIN_$(1)_TARGET)
-	@cp target/$$(DARWIN_$(1)_TARGET)/release/$(APP) $(DISTDIR)/$(APP)-$$(DARWIN_$(1)_SUFFIX)
-	@chmod +x $(DISTDIR)/$(APP)-$$(DARWIN_$(1)_SUFFIX)
-	@printf 'Wrote %s/%s-%s\n' "$(DISTDIR)" "$(APP)" "$$(DARWIN_$(1)_SUFFIX)"
+	@cp target/$$(DARWIN_$(1)_TARGET)/release/$(APP) $(DISTDIR)/$(DIST_APP)-$$(DARWIN_$(1)_SUFFIX)
+	@chmod +x $(DISTDIR)/$(DIST_APP)-$$(DARWIN_$(1)_SUFFIX)
+	@printf 'Wrote %s/%s-%s\n' "$(DISTDIR)" "$(DIST_APP)" "$$(DARWIN_$(1)_SUFFIX)"
 endef
 $(foreach arch,$(DARWIN_ARCHS),$(eval $(call DARWIN_DIST_RULE,$(arch))))
 
@@ -342,10 +345,10 @@ _dist.linux.$(1): _docker-check
 		$(LINUX_BUILD_IMAGE) \
 		bash -eu -o pipefail -c ' \
 			cargo build --locked --release; \
-			cp target/linux-$(1)-$(LINUX_CACHE_KEY)/release/$(APP) dist/$(APP)-$$(LINUX_$(1)_SUFFIX); \
-			chmod +x dist/$(APP)-$$(LINUX_$(1)_SUFFIX); \
+			cp target/linux-$(1)-$(LINUX_CACHE_KEY)/release/$(APP) dist/$(DIST_APP)-$$(LINUX_$(1)_SUFFIX); \
+			chmod +x dist/$(DIST_APP)-$$(LINUX_$(1)_SUFFIX); \
 			chown -R $(DOCKER_UID):$(DOCKER_GID) dist target/linux-$(1)-$(LINUX_CACHE_KEY) .cargo-linux/$(1) .home-linux/$(LINUX_CACHE_KEY)/$(1)'
-	@printf 'Wrote %s/%s-%s\n' "$(DISTDIR)" "$(APP)" "$$(LINUX_$(1)_SUFFIX)"
+	@printf 'Wrote %s/%s-%s\n' "$(DISTDIR)" "$(DIST_APP)" "$$(LINUX_$(1)_SUFFIX)"
 endef
 $(foreach arch,$(LINUX_ARCHS),$(eval $(call LINUX_DIST_RULE,$(arch))))
 
