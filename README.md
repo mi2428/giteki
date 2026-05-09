@@ -144,17 +144,17 @@ BODYSAR                ―
 型式又は名称           U7-Pro-XGS U7-Pro-XGS-B
 特定無線設備の種別     第2条第80号に規定する特定無線設備
 電波の型式             ・ D1D, G1D 5955~6415 MHz(24Ch)   2.50 mW/MHz
-周波数及び空中線電力   ・ D1D, G1D 5955~6415 MHz(24Ch)   2.50 mW/MHz
-                       ・ D1D, G1D 5965~6405 MHz(12Ch)   1.25 mW/MHz
-                       ・ D1D, G1D 5985~6385 MHz(6Ch)   0.625 mW/MHz
-                       ・ D1D, G1D 6025~6345 MHz(3Ch)   0.313 mW/MHz
-                       ・ D1D, G1D 5955~6415 MHz(24Ch)   2.50 mW/MHz
-                       ・ D1D, G1D 5965~6405 MHz(12Ch)   1.25 mW/MHz
-                       ・ D1D, G1D 5985~6385 MHz(6Ch)   0.625 mW/MHz
-                       ・ D1D, G1D 6025~6345 MHz(3Ch)   0.313 mW/MHz
-                       ・ D1D, G1D 6105~6265 MHz(2Ch)    0.16 mW/MHz
+周波数及び空中線電力    ・ D1D, G1D 5955~6415 MHz(24Ch)   2.50 mW/MHz
+                     ・ D1D, G1D 5965~6405 MHz(12Ch)   1.25 mW/MHz
+                     ・ D1D, G1D 5985~6385 MHz(6Ch)   0.625 mW/MHz
+                     ・ D1D, G1D 6025~6345 MHz(3Ch)   0.313 mW/MHz
+                     ・ D1D, G1D 5955~6415 MHz(24Ch)   2.50 mW/MHz
+                     ・ D1D, G1D 5965~6405 MHz(12Ch)   1.25 mW/MHz
+                     ・ D1D, G1D 5985~6385 MHz(6Ch)   0.625 mW/MHz
+                     ・ D1D, G1D 6025~6345 MHz(3Ch)   0.313 mW/MHz
+                     ・ D1D, G1D 6105~6265 MHz(2Ch)    0.16 mW/MHz
 スプリアス規定         新スプリアス規定
-BODYSAR                ―
+BODYSAR              ―
 周波数維持機能         無
 認証機関名称           Kiwa Nederland B.V.
 ───────────────────────────────────────────────────────────────────────────
