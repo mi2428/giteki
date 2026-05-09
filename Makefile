@@ -145,20 +145,28 @@ release: ## Build 4 local dist binaries, push the tag, and publish a GitHub rele
 		printf '%s\0' "$${assets[@]}"; \
 	}; \
 	publish_github_release() { \
-		local release_tag="$$1" release_commit="$$2" repository="$$3" prerelease_flag=() assets=(); \
+		local release_tag="$$1" release_commit="$$2" repository="$$3" assets=(); \
 		while IFS= read -r -d '' asset; do assets+=("$$asset"); done < <(release_assets); \
-		if is_prerelease_tag "$$release_tag"; then prerelease_flag=(--prerelease); fi; \
 		if gh release view "$$release_tag" --repo "$$repository" >/dev/null 2>&1; then \
 			run gh release upload "$$release_tag" "$${assets[@]}" --clobber --repo "$$repository"; \
 			return; \
 		fi; \
-		run gh release create "$$release_tag" \
-			--repo "$$repository" \
-			--target "$$release_commit" \
-			--title "$$release_tag" \
-			--generate-notes \
-			"$${prerelease_flag[@]}" \
-			"$${assets[@]}"; \
+		if is_prerelease_tag "$$release_tag"; then \
+			run gh release create "$$release_tag" \
+				--repo "$$repository" \
+				--target "$$release_commit" \
+				--title "$$release_tag" \
+				--generate-notes \
+				--prerelease \
+				"$${assets[@]}"; \
+		else \
+			run gh release create "$$release_tag" \
+				--repo "$$repository" \
+				--target "$$release_commit" \
+				--title "$$release_tag" \
+				--generate-notes \
+				"$${assets[@]}"; \
+		fi; \
 	}; \
 	[[ -n "$$tag" ]] || fail "TAG is required, for example: make release TAG=v0.1.0"; \
 	[[ "$$tag" =~ $$SEMVER_TAG_RE ]] || fail "TAG must look like vMAJOR.MINOR.PATCH"; \
