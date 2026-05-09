@@ -2,12 +2,13 @@
 
 `giteki` is a Rust CLI that queries Japan's Ministry of Internal Affairs and Communications [public Web API](https://www.tele.soumu.go.jp/j/sys/equ/tech/webapi/) for certified radio equipment and prints Giteki certification details in the terminal.
 
+[![](https://github.com/mi2428/giteki/blob/main/screenshot.png?raw=true)](https://github.com/mi2428/giteki/blob/main/screenshot.png)
+
 ## Installation
 
 ### Build from Source
 
 Install Rust and Cargo first, then build and install the binary with `make install`.
-
 By default, the binary is installed to `~/.local/bin/giteki`.
 Set `INSTALL_BINDIR` if you want to install it somewhere else.
 
@@ -61,114 +62,8 @@ Options:
   -V, --version                      Print version
 ```
 
-```console
-$ giteki 201-250579
-
-API data last updated 2026-05-08
-
-#1  201-250579  U7-Pro-XGS U7-Pro-XGS-B  Ubiquiti Inc.
-───────────────────────────────────────────────────────────────────────────
-種類                   相互承認(MRA)による工事設計認証
-番号                   201-250579
-年月日                 2025-08-14
-氏名又は名称           Ubiquiti Inc.
-型式又は名称           U7-Pro-XGS U7-Pro-XGS-B
-特定無線設備の種別     第2条第19号に規定する特定無線設備
-電波の型式             ・ G1D 2412~2472 MHz(13Ch)       6.40 mW/MHz
-周波数及び空中線電力   ・ D1D, G1D 2412~2472 MHz(13Ch)  6.50 mW/MHz
-                       ・ D1D, G1D 2412~2472 MHz(13Ch)  6.50 mW/MHz
-                       ・ D1D, G1D 2422~2462 MHz(9Ch)   3.25 mW/MHz
-                       ・ D1D, G1D 2412~2472 MHz(13Ch)  6.50 mW/MHz
-                       ・ D1D, G1D 2422~2462 MHz(9Ch)   3.25 mW/MHz
-                       ・ D1D, G1D 2412~2472 MHz(13Ch)  6.50 mW/MHz
-                       ・ D1D, G1D 2422~2462 MHz(9Ch)   3.25 mW/MHz
-スプリアス規定         新スプリアス規定
-BODYSAR                ―
-周波数維持機能         無
-認証機関名称           Kiwa Nederland B.V.
-添付ファイル名         201-250579_01_002.pdf
-                       201-250579_01_003.pdf
-                       201-250579_02_004.pdf
-                       201-250579_02_005.pdf
-                       201-250579_02_006.pdf
-添付ファイルキー       201_N_1_250902N201_%E8%AA%8D%E8%A8%BC_35_*****_*****
-添付ファイル数         外観写真等: 2 / 特性試験の結果: 3
-───────────────────────────────────────────────────────────────────────────
-
-#2  201-250579  U7-Pro-XGS U7-Pro-XGS-B  Ubiquiti Inc.
-───────────────────────────────────────────────────────────────────────────
-種類                   相互承認(MRA)による工事設計認証
-番号                   201-250579
-年月日                 2025-08-14
-氏名又は名称           Ubiquiti Inc.
-型式又は名称           U7-Pro-XGS U7-Pro-XGS-B
-特定無線設備の種別     第2条第19号の3に規定する特定無線設備
-電波の型式             ・ D1D, G1D 5180~5320 MHz(8Ch)    2.50 mW/MHz
-周波数及び空中線電力   ・ D1D, G1D 5500~5720 MHz(12Ch)  10.00 mW/MHz
-                       ・ D1D, G1D 5180~5320 MHz(8Ch)    2.50 mW/MHz
-                       ・ D1D, G1D 5500~5720 MHz(12Ch)  10.00 mW/MHz
-                       ・ D1D, G1D 5190~5310 MHz(4Ch)    1.30 mW/MHz
-                       ・ D1D, G1D 5510~5710 MHz(6Ch)    4.90 mW/MHz
-                       ・ D1D, G1D 5210~5290 MHz(2Ch)    0.60 mW/MHz
-                       ・ D1D, G1D 5530~5690 MHz(3Ch)    2.50 mW/MHz
-                       ・ D1D, G1D 5250~5250 MHz         0.31 mW/MHz
-                       ・ D1D, G1D 5570~5570 MHz         1.20 mW/MHz
-                       ・ D1D, G1D 5180~5320 MHz(8Ch)    2.50 mW/MHz
-                       ・ D1D, G1D 5500~5720 MHz(12Ch)  10.00 mW/MHz
-                       ・ D1D, G1D 5190~5310 MHz(4Ch)    1.30 mW/MHz
-                       ・ D1D, G1D 5510~5710 MHz(6Ch)    4.90 mW/MHz
-                       ・ D1D, G1D 5210~5290 MHz(2Ch)    0.60 mW/MHz
-                       ・ D1D, G1D 5530~5690 MHz(3Ch)    2.50 mW/MHz
-                       ・ D1D, G1D 5250~5250 MHz         0.31 mW/MHz
-                       ・ D1D, G1D 5570~5570 MHz         1.20 mW/MHz
-                       ・ D1D, G1D 5180~5320 MHz(8Ch)    2.50 mW/MHz
-                       ・ D1D, G1D 5500~5720 MHz(12Ch)  10.00 mW/MHz
-                       ・ D1D, G1D 5190~5310 MHz(4Ch)    1.30 mW/MHz
-                       ・ D1D, G1D 5510~5710 MHz(6Ch)    4.90 mW/MHz
-                       ・ D1D, G1D 5210~5290 MHz(2Ch)    0.60 mW/MHz
-                       ・ D1D, G1D 5530~5690 MHz(3Ch)    2.50 mW/MHz
-                       ・ D1D, G1D 5250~5250 MHz         0.31 mW/MHz
-                       ・ D1D, G1D 5570~5570 MHz         1.20 mW/MHz
-スプリアス規定         新スプリアス規定
-BODYSAR                ―
-周波数維持機能         無
-認証機関名称           Kiwa Nederland B.V.
-───────────────────────────────────────────────────────────────────────────
-
-#3  201-250579  U7-Pro-XGS U7-Pro-XGS-B  Ubiquiti Inc.
-───────────────────────────────────────────────────────────────────────────
-種類                   相互承認(MRA)による工事設計認証
-番号                   201-250579
-年月日                 2025-08-14
-氏名又は名称           Ubiquiti Inc.
-型式又は名称           U7-Pro-XGS U7-Pro-XGS-B
-特定無線設備の種別     第2条第80号に規定する特定無線設備
-電波の型式             ・ D1D, G1D 5955~6415 MHz(24Ch)   2.50 mW/MHz
-周波数及び空中線電力    ・ D1D, G1D 5955~6415 MHz(24Ch)   2.50 mW/MHz
-                     ・ D1D, G1D 5965~6405 MHz(12Ch)   1.25 mW/MHz
-                     ・ D1D, G1D 5985~6385 MHz(6Ch)   0.625 mW/MHz
-                     ・ D1D, G1D 6025~6345 MHz(3Ch)   0.313 mW/MHz
-                     ・ D1D, G1D 5955~6415 MHz(24Ch)   2.50 mW/MHz
-                     ・ D1D, G1D 5965~6405 MHz(12Ch)   1.25 mW/MHz
-                     ・ D1D, G1D 5985~6385 MHz(6Ch)   0.625 mW/MHz
-                     ・ D1D, G1D 6025~6345 MHz(3Ch)   0.313 mW/MHz
-                     ・ D1D, G1D 6105~6265 MHz(2Ch)    0.16 mW/MHz
-スプリアス規定         新スプリアス規定
-BODYSAR              ―
-周波数維持機能         無
-認証機関名称           Kiwa Nederland B.V.
-───────────────────────────────────────────────────────────────────────────
-```
-
-### Attachment Files
-
 The `file` subcommand saves an attachment PDF using the `attachmentFileKey` returned by the detail list API.
 URL-encoded fragments in the key, such as `%E8...`, are decoded automatically by the CLI.
-
-```console
-$ giteki file '020_N_1_240830N020_%E8%AA%8D%E8%A8%BC_51_*****_*****' \
-    --type 1 --number 1 --output attachment.pdf
-```
 
 ```console
 $ giteki file --help
