@@ -20,7 +20,7 @@ $ make -C giteki install
 > Pick the asset that matches your machine, make it executable, and place it on your `PATH`.
 > 
 > ```console
-> $ curl -L -o giteki https://github.com/mi2428/giteki/releases/download/v0.9.0/giteki-v0.9.0-darwin-arm64
+> $ curl -L -o giteki https://github.com/mi2428/giteki/releases/download/v0.9.1/giteki-v0.9.1-darwin-arm64
 > $ chmod +x ./giteki
 > ```
 
@@ -35,7 +35,7 @@ Usage: giteki [OPTIONS] [NUMBER]
        giteki <COMMAND>
 
 Commands:
-  file  Save an attachment PDF by file key (一覧詳細情報の添付ファイル取得キー)
+  file  Save an attachment file by file key (一覧詳細情報の添付ファイル取得キー)
   help  Print this message or the help of the given subcommand(s)
 
 Arguments:
@@ -61,24 +61,25 @@ Options:
   -V, --version                      Print version
 ```
 
-The `file` subcommand saves an attachment PDF using the `attachmentFileKey` returned by the detail list API.
+The `file` subcommand saves an attachment file using the `attachmentFileKey` returned by the detail list API.
+`--output` is a directory, and the CLI writes `giteki_<number>.zip` or `giteki_<number>.pdf` based on the API response.
 URL-encoded fragments in the key, such as `%E8...`, are decoded automatically by the CLI.
 
 ```console
 $ giteki file --help
 
-Save an attachment PDF by file key (一覧詳細情報の添付ファイル取得キー)
+Save an attachment file by file key (一覧詳細情報の添付ファイル取得キー)
 
-Usage: giteki file [OPTIONS] --output <PATH> <AFK>
+Usage: giteki file [OPTIONS] --output <DIR> <AFK>
 
 Arguments:
   <AFK>  Attachment file key (添付ファイル取得キー) returned by detail-list API (一覧詳細情報取得API)
 
 Options:
-      --type <AFT>     Attachment file type (添付ファイル種別). 1: 外観写真等, 2: 特性試験の結果
-      --number <AFN>   Attachment file number (添付ファイル番号). Requires --type
-  -o, --output <PATH>  Output PDF path
-  -h, --help           Print help
+      --type <AFT>    Attachment file type (添付ファイル種別). 1: 外観写真等, 2: 特性試験の結果
+      --number <AFN>  Attachment file number (添付ファイル番号). Requires --type
+  -o, --output <DIR>  Output directory for giteki_<number>.{zip|pdf}; created if missing
+  -h, --help          Print help
 ```
 
 ## Development

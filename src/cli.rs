@@ -24,7 +24,7 @@ pub(crate) struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub(crate) enum Commands {
-    #[command(about = "Save an attachment PDF by file key (一覧詳細情報の添付ファイル取得キー)")]
+    #[command(about = "Save an attachment file by file key (一覧詳細情報の添付ファイル取得キー)")]
     File(FileArgs),
 }
 
@@ -165,7 +165,12 @@ pub(crate) struct FileArgs {
     )]
     pub(crate) attachment_number: Option<u8>,
 
-    #[arg(short, long, value_name = "PATH", help = "Output PDF path")]
+    #[arg(
+        short,
+        long,
+        value_name = "DIR",
+        help = "Output directory for giteki_<number>.{zip|pdf}; created if missing"
+    )]
     pub(crate) output: PathBuf,
 }
 

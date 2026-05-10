@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use anyhow::{Context, Result, bail};
 use percent_encoding::percent_decode_str;
-use reqwest::header::{ACCEPT, HeaderMap, HeaderValue, REFERER};
+use reqwest::header::{ACCEPT, CONTENT_DISPOSITION, HeaderMap, HeaderValue, REFERER};
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value;
 
@@ -76,17 +76,25 @@ impl GitekiClient {
         Ok(body)
     }
 
-    pub(crate) async fn download_file(&self, query: &FileQuery<'_>) -> Result<Vec<u8>> {
+    pub(crate) async fn download_file(&self, query: &FileQuery<'_>) -> Result<FileDownload> {
         let response = self
             .http
             .get(API_FILE_ENDPOINT)
-            .header(ACCEPT, "application/pdf,*/*")
+            .header(
+                ACCEPT,
+                "application/pdf,application/zip,application/octet-stream,*/*",
+            )
             .query(query)
             .send()
             .await
             .context("request to 総務省API attachment endpoint failed")?;
 
         let status = response.status();
+        let filename = response
+            .headers()
+            .get(CONTENT_DISPOSITION)
+            .and_then(|value| value.to_str().ok())
+            .and_then(content_disposition_filename);
         let bytes = response
             .bytes()
             .await
@@ -100,8 +108,17 @@ impl GitekiClient {
             );
         }
 
-        Ok(bytes.to_vec())
+        Ok(FileDownload {
+            bytes: bytes.to_vec(),
+            filename,
+        })
     }
+}
+
+#[derive(Debug)]
+pub(crate) struct FileDownload {
+    pub(crate) bytes: Vec<u8>,
+    pub(crate) filename: Option<String>,
 }
 
 #[derive(Debug, Serialize)]
@@ -225,6 +242,54 @@ pub(crate) fn decode_attachment_key(value: &str) -> String {
     percent_decode_str(value).decode_utf8_lossy().into_owned()
 }
 
+fn content_disposition_filename(value: &str) -> Option<String> {
+    let mut fallback = None;
+
+    for part in value.split(';').map(str::trim) {
+        if let Some(raw) = part.strip_prefix("filename*=") {
+            if let Some(filename) = decode_rfc5987_filename(raw) {
+                return Some(filename);
+            }
+        } else if let Some(raw) = part.strip_prefix("filename=") {
+            fallback = Some(unquote_header_value(raw));
+        }
+    }
+
+    fallback
+}
+
+fn decode_rfc5987_filename(value: &str) -> Option<String> {
+    let value = value.trim_matches('"');
+    let encoded = value.strip_prefix("UTF-8''").unwrap_or(value);
+    percent_decode_str(encoded)
+        .decode_utf8()
+        .ok()
+        .map(|decoded| decoded.into_owned())
+}
+
+fn unquote_header_value(value: &str) -> String {
+    let value = value.trim();
+    let Some(quoted) = value
+        .strip_prefix('"')
+        .and_then(|value| value.strip_suffix('"'))
+    else {
+        return value.to_string();
+    };
+
+    let mut output = String::with_capacity(quoted.len());
+    let mut chars = quoted.chars();
+    while let Some(character) = chars.next() {
+        if character == '\\' {
+            if let Some(escaped) = chars.next() {
+                output.push(escaped);
+            }
+        } else {
+            output.push(character);
+        }
+    }
+    output
+}
+
 fn deserialize_u32<'de, D>(deserializer: D) -> std::result::Result<u32, D::Error>
 where
     D: Deserializer<'de>,
@@ -271,6 +336,26 @@ mod tests {
         assert_eq!(
             decode_attachment_key("020_N_1_240830N020_%E8%AA%8D%E8%A8%BC_51_*****_*****"),
             "020_N_1_240830N020_認証_51_*****_*****"
+        );
+    }
+
+    #[test]
+    fn extracts_filename_from_content_disposition() {
+        assert_eq!(
+            content_disposition_filename(r#"attachment; filename="022-200057_20200929.zip""#)
+                .as_deref(),
+            Some("022-200057_20200929.zip")
+        );
+    }
+
+    #[test]
+    fn extracts_encoded_filename_from_content_disposition() {
+        assert_eq!(
+            content_disposition_filename(
+                "attachment; filename*=UTF-8''022-200057_%E8%AA%8D%E8%A8%BC.pdf"
+            )
+            .as_deref(),
+            Some("022-200057_認証.pdf")
         );
     }
 
